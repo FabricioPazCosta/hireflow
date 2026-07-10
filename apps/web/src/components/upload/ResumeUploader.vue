@@ -2,6 +2,10 @@
 import { ref } from 'vue'
 import { Upload } from 'lucide-vue-next'
 
+const emit = defineEmits<{
+  (e: 'file-selected', file: File): void
+}>()
+
 const selectedFile = ref<File | null>(null)
 
 function handleFileChange(event: Event) {
@@ -12,6 +16,8 @@ function handleFileChange(event: Event) {
   if (!file) return
 
   selectedFile.value = file
+
+  emit('file-selected', file)
 }
 </script>
 

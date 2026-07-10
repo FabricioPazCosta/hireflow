@@ -1,6 +1,26 @@
 <script setup lang="ts">
 import ResumeUploader from '@/components/upload/ResumeUploader.vue'
 import { FileText } from 'lucide-vue-next'
+import { useRouter } from 'vue-router'
+
+import { useResumeAnalysis } from '@/composables/useResumeAnalysis'
+
+const router = useRouter()
+
+const {
+
+  jobDescription,
+  canAnalyze,
+  setResume
+} = useResumeAnalysis()
+
+function analyzeResume() {
+  router.push('/result')
+}
+
+function handleFileSelected(file: File) {
+  setResume(file)
+}
 </script>
 
 <template>
@@ -28,19 +48,27 @@ import { FileText } from 'lucide-vue-next'
       <div
         class="mt-12 w-full max-w-2xl rounded-2xl border border-slate-800 bg-slate-900 p-8 shadow-2xl"
       >
-        <ResumeUploader />
+        <ResumeUploader @file-selected="handleFileSelected" />
 
-        <textarea
-          class="mt-8 h-40 w-full rounded-xl border border-slate-700 bg-slate-950 p-4 text-white outline-none transition focus:border-blue-500"
-          placeholder="Cole aqui a descrição da vaga..."
-        />
+       <textarea
+  v-model="jobDescription"
+  class="mt-8 h-40 w-full rounded-xl border border-slate-700 bg-slate-950 p-4 text-white outline-none transition focus:border-blue-500"
+  placeholder="Cole aqui a descrição da vaga..."
+/>
 
         <button
-          class="mt-8 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-4 text-lg font-semibold transition hover:bg-blue-700"
-        >
-          <FileText class="h-5 w-5" />
-          Gerar HireScore
-        </button>
+  @click="analyzeResume"
+  :disabled="!canAnalyze"
+  :class="[
+    'mt-8 flex w-full items-center justify-center gap-2 rounded-xl px-6 py-4 text-lg font-semibold transition',
+    canAnalyze
+      ? 'bg-blue-600 hover:bg-blue-700'
+      : 'cursor-not-allowed bg-slate-700 text-slate-400'
+  ]"
+>
+  <FileText class="h-5 w-5" />
+  Gerar HireScore
+</button>
       </div>
     </section>
   </main>
